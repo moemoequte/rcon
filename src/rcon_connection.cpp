@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <boost/asio.hpp>
+#include <chrono>
+#include <thread>
 #include "cialloo/rcon_connection.hpp"
 
 namespace cialloo {
@@ -52,18 +54,22 @@ std::string connection::process_command(int32_t packet_id)
 {
     send_packet("", SERVERDATA_RESPONSE_VALUE);
     std::string response;
+    int time = 0;
     while(1)
     {
         unsigned char size[4], id[4], type[4];
         socket_.receive(net::buffer(size));
         socket_.receive(net::buffer(id));
         socket_.receive(net::buffer(type));
-        if(byte32_to_int(id) == (packet_id + 1))
-            break;
-
         size_t content_size = (byte32_to_int(size) - 8);
+        if(content_size > 1024)
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         char body[content_size];
         socket_.receive(net::buffer(body, content_size));
+        if(byte32_to_int(id) == (packet_id + 1) && time == 1)
+            break;
+        else if(byte32_to_int(id) == (packet_id + 1) && time != 1)
+            time++;
         for(size_t i = 0; i < content_size; i++)
         {
             if(body[i] != '\0')
