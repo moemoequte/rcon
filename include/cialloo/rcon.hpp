@@ -17,15 +17,15 @@ namespace rcon {
     
 namespace net = boost::asio;
 
-class rcon
+class client
 {
     connection connection_;
 public:
-    rcon(host h);
-    rcon(std::string host, std::string port, std::string password);
-    ~rcon();
-    rcon& operator=(const rcon&) = delete;
-    rcon(const rcon&) = delete;
+    client(host h);
+    client(std::string host, std::string port, std::string password);
+    ~client();
+    client& operator=(const client&) = delete;
+    client(const client&) = delete;
 
     /**
      * Send a command to target host

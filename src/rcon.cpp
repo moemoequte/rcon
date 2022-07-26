@@ -3,20 +3,20 @@
 namespace cialloo {
 namespace rcon {
 
-rcon::rcon(host h) : connection_(h)
+client::client(host h) : connection_(h)
 {
 }
 
-rcon::rcon(std::string addr, std::string port, std::string password)
+client::client(std::string addr, std::string port, std::string password)
     : connection_(host(addr, port, password))
 {
 }
 
-rcon::~rcon()
+client::~client()
 {
 }
 
-std::string rcon::command(std::string cmd)
+std::string client::command(std::string cmd)
 {
     return connection_.send_packet(cmd, SERVERDATA_EXECCOMMAND);
 }
