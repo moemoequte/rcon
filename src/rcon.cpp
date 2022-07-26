@@ -11,5 +11,10 @@ rcon::~rcon()
 {
 }
 
+std::string rcon::command(std::string cmd)
+{
+    return connection_.send_packet(cmd, SERVERDATA_EXECCOMMAND);
+}
+
 } // namespace rcon
 } // namespace cialloo

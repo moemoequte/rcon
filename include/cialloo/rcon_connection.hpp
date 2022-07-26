@@ -36,6 +36,7 @@ public:
 private:
     void authenticate(std::string password);
     std::string process_auth(int32_t id);
+    std::string process_command(int32_t id);
     int32_t byte32_to_int(unsigned char* array);
 };
 

@@ -25,6 +25,7 @@ void connection::authenticate(std::string password)
 
 std::string connection::send_packet(std::string cmd, int32_t type)
 {
+    packet_id_++;
     int32_t packet_size = 4 + 4 + 4 + cmd.length() + 1 + 1;
     unsigned char packet[packet_size];
     for(size_t i = 0; i < packet_size; i++)
@@ -41,8 +42,36 @@ std::string connection::send_packet(std::string cmd, int32_t type)
 
     if(type == SERVERDATA_AUTH)
         return process_auth(connection::packet_id_);
+    else if(type == SERVERDATA_EXECCOMMAND)
+        return process_command(connection::packet_id_);
 
     return "";
+}
+
+std::string connection::process_command(int32_t packet_id)
+{
+    send_packet("", SERVERDATA_RESPONSE_VALUE);
+    std::string response;
+    while(1)
+    {
+        unsigned char size[4], id[4], type[4];
+        socket_.receive(net::buffer(size));
+        socket_.receive(net::buffer(id));
+        socket_.receive(net::buffer(type));
+        if(byte32_to_int(id) == (packet_id + 1))
+            break;
+
+        size_t content_size = (byte32_to_int(size) - 8);
+        char body[content_size];
+        socket_.receive(net::buffer(body, content_size));
+        for(size_t i = 0; i < content_size; i++)
+        {
+            if(body[i] != '\0')
+                response += body[i];
+        }
+    }
+
+    return response;
 }
 
 std::string connection::process_auth(int32_t id)
