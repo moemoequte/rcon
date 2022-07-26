@@ -18,7 +18,7 @@ class connection
     bool auth_;
 public:
     connection(host h);
-    ~connection(){};
+    ~connection();
     connection& operator=(const connection&) = delete;
     connection(const connection&) = delete;
 

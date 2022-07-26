@@ -9,6 +9,9 @@
 #define SERVERDATA_EXECCOMMAND      2
 #define SERVERDATA_RESPONSE_VALUE   0
 
+#define RCON_WAIT_BUFFER_SIZE       1024
+#define RCON_WAIT_BUFFER_TIME       500     // milisecond
+
 namespace cialloo {
 namespace rcon {
     
@@ -19,6 +22,7 @@ class rcon
     connection connection_;
 public:
     rcon(host h);
+    rcon(std::string host, std::string port, std::string password);
     ~rcon();
     rcon& operator=(const rcon&) = delete;
     rcon(const rcon&) = delete;

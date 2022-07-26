@@ -20,6 +20,11 @@ connection::connection(host h)
     authenticate(h.password);
 }
 
+connection::~connection()
+{
+    socket_.close();
+}
+
 void connection::authenticate(std::string password)
 {
     send_packet(password, SERVERDATA_AUTH);
@@ -52,6 +57,9 @@ std::string connection::send_packet(std::string cmd, int32_t type)
 
 std::string connection::process_command(int32_t packet_id)
 {
+    if(!auth_)
+        return "Authenticate fail!\nPlease check your rcon config.\n";
+
     send_packet("", SERVERDATA_RESPONSE_VALUE);
     std::string response;
     int time = 0;
@@ -62,8 +70,8 @@ std::string connection::process_command(int32_t packet_id)
         socket_.receive(net::buffer(id));
         socket_.receive(net::buffer(type));
         size_t content_size = (byte32_to_int(size) - 8);
-        if(content_size > 1024)
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        if(content_size > RCON_WAIT_BUFFER_SIZE)
+            std::this_thread::sleep_for(std::chrono::milliseconds(RCON_WAIT_BUFFER_TIME));
         char body[content_size];
         socket_.receive(net::buffer(body, content_size));
         if(byte32_to_int(id) == (packet_id + 1) && time == 1)

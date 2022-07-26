@@ -7,6 +7,11 @@ rcon::rcon(host h) : connection_(h)
 {
 }
 
+rcon::rcon(std::string addr, std::string port, std::string password)
+    : connection_(host(addr, port, password))
+{
+}
+
 rcon::~rcon()
 {
 }
