@@ -15,6 +15,7 @@ class connection
     net::io_context io_context_;
     net::ip::tcp::socket socket_;
     net::ip::tcp::resolver resolver_;
+    bool auth_;
 public:
     connection(host h);
     ~connection(){};
@@ -34,6 +35,8 @@ public:
 
 private:
     void authenticate(std::string password);
+    std::string process_auth(int32_t id);
+    int32_t byte32_to_int(unsigned char* array);
 };
 
 
