@@ -4,6 +4,8 @@
 #include <string>
 #include <asio.hpp>
 
+namespace valve {
+
 #define SERVERDATA_AUTH             3
 #define SERVERDATA_AUTH_RESPONSE    2
 #define SERVERDATA_EXECCOMMAND      2
@@ -107,14 +109,16 @@ void authenticate(std::string password, asio::ip::tcp::socket& socket)
 
 std::string rcon(std::string host, std::string port, std::string password, std::string cmd)
 {
-    asio::io_context io_context_;
-    asio::ip::tcp::socket socket_(io_context_);
-    asio::ip::tcp::resolver resolver_(io_context_);
-    asio::connect(socket_, resolver_.resolve(host, port));
-    authenticate(password, socket_);
-    std::string response = send_packet(cmd, SERVERDATA_EXECCOMMAND, socket_);
-    socket_.close();
+    asio::io_context io_context;
+    asio::ip::tcp::socket socket(io_context);
+    asio::ip::tcp::resolver resolver(io_context);
+    asio::connect(socket, resolver.resolve(host, port));
+    authenticate(password, socket);
+    std::string response = send_packet(cmd, SERVERDATA_EXECCOMMAND, socket);
+    socket.close();
     return response;
+}
+
 }
 
 #endif
