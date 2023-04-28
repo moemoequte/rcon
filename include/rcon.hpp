@@ -6,6 +6,8 @@
 
 namespace valve {
 
+#define RCON_VERSION                "1.0.1"
+
 #define SERVERDATA_AUTH             3
 #define SERVERDATA_AUTH_RESPONSE    2
 #define SERVERDATA_EXECCOMMAND      2
